@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq; // Import LINQ for FirstOrDefault
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
@@ -15,6 +17,9 @@ namespace Graphorama
     {
         private PlotModel plotModel;
         private List<string> functionList = new List<string>();
+        private bool isDarkMode = false;
+        private bool isRealTime = false;
+        private int realTimeSpeed = 256;
 
         public MainWindow()
         {
@@ -28,10 +33,20 @@ namespace Graphorama
             plotModel = new PlotModel { Title = "Graphorama" };
             plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "X-Axis" });
             plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Y-Axis" });
+
+            // Add default grid lines
+            foreach (var axis in plotModel.Axes)
+            {
+                axis.MajorGridlineStyle = LineStyle.Solid;
+                axis.MinorGridlineStyle = LineStyle.Dot;
+                axis.MajorGridlineColor = OxyColors.Gray;
+                axis.MinorGridlineColor = OxyColors.LightGray;
+            }
+
             PlotView.Model = plotModel;
         }
 
-        private void PlotFunction(string equation)
+        private async Task PlotFunctionRealTime(string equation)
         {
             try
             {
@@ -42,17 +57,18 @@ namespace Graphorama
                     if (!double.IsNaN(y) && !double.IsInfinity(y))
                     {
                         series.Points.Add(new DataPoint(x, y));
+                        plotModel.Series.Clear();
+                        plotModel.Series.Add(series);
+                        plotModel.InvalidatePlot(true);
+                        await Task.Delay(1000 / realTimeSpeed); // Control speed
                     }
                 }
-
-                plotModel.Series.Add(series);
-                plotModel.InvalidatePlot(true);
                 functionList.Add(equation);
                 UpdateFunctionList();
             }
             catch
             {
-                MessageBox.Show("Invalid equation. Please check your input.");
+                MessageBox.Show("Invalid equation for real-time graphing.");
             }
         }
 
@@ -85,8 +101,39 @@ namespace Graphorama
             string equation = EquationInput.Text.Trim();
             if (!string.IsNullOrWhiteSpace(equation))
             {
-                PlotFunction(equation);
+                if (isRealTime)
+                {
+                    _ = PlotFunctionRealTime(equation); // Use async graphing
+                }
+                else
+                {
+                    PlotFunction(equation);
+                }
                 EquationInput.Clear();
+            }
+        }
+
+        private void PlotFunction(string equation)
+        {
+            try
+            {
+                var series = new LineSeries { Title = equation };
+                for (double x = -10; x <= 10; x += 0.1)
+                {
+                    double y = EvaluateEquation(equation, x);
+                    if (!double.IsNaN(y) && !double.IsInfinity(y))
+                    {
+                        series.Points.Add(new DataPoint(x, y));
+                    }
+                }
+                plotModel.Series.Add(series);
+                plotModel.InvalidatePlot(true);
+                functionList.Add(equation);
+                UpdateFunctionList();
+            }
+            catch
+            {
+                MessageBox.Show("Invalid equation. Please check your input.");
             }
         }
 
@@ -107,24 +154,58 @@ namespace Graphorama
             plotModel.InvalidatePlot(true);
         }
 
-        private void OnFunctionListKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void OnToggleDarkModeClick(object sender, RoutedEventArgs e)
         {
-            if (e.Key == System.Windows.Input.Key.Back)
+            isDarkMode = !isDarkMode;
+            var backgroundColor = isDarkMode ? OxyColors.Black : OxyColors.White;
+            var textColor = isDarkMode ? OxyColors.LightGray : OxyColors.Black;
+
+            plotModel.Background = backgroundColor;
+            plotModel.TextColor = textColor;
+            plotModel.InvalidatePlot(true);
+        }
+
+        private void OnRealTimeToggleClick(object sender, RoutedEventArgs e)
+        {
+            isRealTime = !isRealTime;
+            RealTimeButton.Content = isRealTime ? "Real-Time: On" : "Real-Time: Off";
+        }
+
+        public static int Clamp(int value, int min, int max)
+        {
+            if (value < min) return min;
+            if (value > max) return max;
+            return value;
+        }
+
+        private void OnSpeedChanged(object sender, TextChangedEventArgs e)
+        {
+            if (int.TryParse(SpeedInput.Text, out int speed))
             {
-                if (FunctionList.SelectedItem is string selectedFunction)
-                {
-                    functionList.Remove(selectedFunction);
+                realTimeSpeed = Clamp(speed, 1, 256);
+            }
+            else
+            {
+                realTimeSpeed = 256; // Default to max
+            }
+        }
 
-                    // Find the series with the matching title
-                    var seriesToRemove = plotModel.Series.FirstOrDefault(s => s.Title == selectedFunction);
-                    if (seriesToRemove != null)
-                    {
-                        plotModel.Series.Remove(seriesToRemove);
-                        plotModel.InvalidatePlot(true);
-                    }
+        private void EquationInput_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (EquationInput.Text == "Enter function, e.g., 2x + 3")
+            {
+                EquationInput.Text = "";
+                EquationInput.Foreground = System.Windows.Media.Brushes.Black;
+            }
+        }
 
-                    UpdateFunctionList();
-                }
+        // Event handler for when the EquationInput loses focus
+        private void EquationInput_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(EquationInput.Text))
+            {
+                EquationInput.Text = "Enter function, e.g., 2x + 3";
+                EquationInput.Foreground = System.Windows.Media.Brushes.Gray;
             }
         }
 

@@ -2,24 +2,46 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.org/wpf"
-        Title="Graphorama" Height="600" Width="800">
+        Title="Graphorama" Height="600" Width="1000">
     <Grid>
+        <!-- Main Layout -->
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+
         <!-- Graph Area -->
-        <oxy:PlotView x:Name="PlotView" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Margin="10,10,300,10"/>
+        <oxy:PlotView x:Name="PlotView" Grid.Column="0" Margin="10" />
 
-        <!-- Right Panel -->
-        <StackPanel Orientation="Vertical" Width="280" HorizontalAlignment="Right" Margin="0,10,10,10">
-            <!-- Input Section -->
-            <TextBox x:Name="EquationInput" Height="30" Margin="0,0,0,10" />
+        <!-- Controls Panel -->
+        <StackPanel Orientation="Vertical" Grid.Column="1" Margin="10">
+            <!-- Input Box for Function -->
+            <TextBox x:Name="EquationInput" Height="30" Margin="0,0,0,10"
+                    Text="Enter function, e.g., 2x + 3"
+                    Foreground="Gray"
+                    GotFocus="EquationInput_GotFocus"
+                    LostFocus="EquationInput_LostFocus" />
 
+
+            <!-- Add Expression Button -->
             <Button Content="Add Expression" Height="30" Margin="0,0,0,10" Click="OnAddExpressionClick" />
 
-            <!-- Function List -->
-            <ListBox x:Name="FunctionList" Height="350" VerticalAlignment="Top" KeyDown="OnFunctionListKeyDown" />
+            <!-- List of Functions -->
+            <ListBox x:Name="FunctionList" Height="200" Margin="0,0,0,10" />
 
-            <!-- Buttons -->
-            <Button Content="Clear Graph" Height="30" Margin="0,10,0,0" Click="OnClearGraphClick" />
-            <Button Content="Reset Zoom" Height="30" Margin="0,10,0,0" Click="OnResetZoomClick" />
+            <!-- Clear and Reset Buttons -->
+            <Button Content="Clear Graph" Height="30" Margin="0,0,0,10" Click="OnClearGraphClick" />
+            <Button Content="Reset Zoom" Height="30" Margin="0,0,0,10" Click="OnResetZoomClick" />
+
+            <!-- Dark Mode Toggle -->
+            <Button Content="Toggle Dark Mode" Height="30" Margin="0,0,0,10" Click="OnToggleDarkModeClick" />
+
+            <!-- Real-Time Graphing Controls -->
+            <Button x:Name="RealTimeButton" Content="Real-Time: Off" Height="30" Margin="0,0,0,10" Click="OnRealTimeToggleClick" />
+
+            <!-- Real-Time Speed Control -->
+            <TextBlock Text="Real-Time Speed (1–256):" Margin="0,10,0,0" />
+            <TextBox x:Name="SpeedInput" Height="30" Margin="0,0,0,10" Text="256" TextChanged="OnSpeedChanged" />
         </StackPanel>
     </Grid>
 </Window>
