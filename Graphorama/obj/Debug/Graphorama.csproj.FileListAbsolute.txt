@@ -19,3 +19,4 @@ C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphor
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphorama.csproj.Up2Date
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphorama.exe
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphorama.pdb
+C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\NCalc.dll
