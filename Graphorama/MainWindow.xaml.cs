@@ -48,6 +48,8 @@ namespace Graphorama
 
         private double EvaluateEquation(string equation, double x)
         {
+            // Basic parser for mathematical expressions
+            // Extend this or use libraries like NCalc for more complex parsing
             equation = equation.Replace("x", x.ToString());
             DataTable table = new DataTable();
             return Convert.ToDouble(table.Compute(equation, ""));
