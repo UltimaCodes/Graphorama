@@ -34,7 +34,6 @@ namespace Graphorama
             plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Bottom, Title = "X-Axis" });
             plotModel.Axes.Add(new LinearAxis { Position = AxisPosition.Left, Title = "Y-Axis" });
 
-            // Add default grid lines
             foreach (var axis in plotModel.Axes)
             {
                 axis.MajorGridlineStyle = LineStyle.Solid;
@@ -60,7 +59,7 @@ namespace Graphorama
                         plotModel.Series.Clear();
                         plotModel.Series.Add(series);
                         plotModel.InvalidatePlot(true);
-                        await Task.Delay(1000 / realTimeSpeed); // Control speed
+                        await Task.Delay(1000 / realTimeSpeed);
                     }
                 }
                 functionList.Add(equation);
@@ -68,7 +67,7 @@ namespace Graphorama
             }
             catch
             {
-                MessageBox.Show("Invalid equation for real-time graphing.");
+                ShowErrorMessage("Invalid equation for real-time graphing.");
             }
         }
 
@@ -103,7 +102,7 @@ namespace Graphorama
             {
                 if (isRealTime)
                 {
-                    _ = PlotFunctionRealTime(equation); // Use async graphing
+                    _ = PlotFunctionRealTime(equation);
                 }
                 else
                 {
@@ -133,7 +132,7 @@ namespace Graphorama
             }
             catch
             {
-                MessageBox.Show("Invalid equation. Please check your input.");
+                ShowErrorMessage("Invalid equation. Please check your input.");
             }
         }
 
@@ -186,7 +185,7 @@ namespace Graphorama
             }
             else
             {
-                realTimeSpeed = 256; // Default to max
+                realTimeSpeed = 256;
             }
         }
 
@@ -199,7 +198,6 @@ namespace Graphorama
             }
         }
 
-        // Event handler for when the EquationInput loses focus
         private void EquationInput_LostFocus(object sender, RoutedEventArgs e)
         {
             if (string.IsNullOrWhiteSpace(EquationInput.Text))
@@ -231,6 +229,48 @@ namespace Graphorama
                     EquationInput.Foreground = System.Windows.Media.Brushes.Gray;
                 }
             };
+        }
+
+        private void ShowErrorMessage(string message)
+        {
+            MessageBox.Show(message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        }
+
+        private void OnChangeLimitsClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                double xMin = double.Parse(XMinInput.Text);
+                double xMax = double.Parse(XMaxInput.Text);
+                double yMin = double.Parse(YMinInput.Text);
+                double yMax = double.Parse(YMaxInput.Text);
+
+                if (xMin >= xMax || yMin >= yMax)
+                {
+                    ShowErrorMessage("Invalid axis limits. Ensure Min values are less than Max values.");
+                    return;
+                }
+
+                foreach (var axis in plotModel.Axes)
+                {
+                    if (axis.Position == AxisPosition.Bottom)
+                    {
+                        axis.Minimum = xMin;
+                        axis.Maximum = xMax;
+                    }
+                    else if (axis.Position == AxisPosition.Left)
+                    {
+                        axis.Minimum = yMin;
+                        axis.Maximum = yMax;
+                    }
+                }
+
+                plotModel.InvalidatePlot(true);
+            }
+            catch
+            {
+                ShowErrorMessage("Invalid input. Please enter numeric values for axis limits.");
+            }
         }
     }
 }
