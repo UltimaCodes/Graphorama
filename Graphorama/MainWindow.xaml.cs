@@ -1,11 +1,9 @@
 ﻿using System;
+using System.Data;
 using System.Windows;
 using OxyPlot;
 using OxyPlot.Series;
 using OxyPlot.Axes;
-using System.Windows.Controls;
-using System.Data;
-using OxyPlot.Wpf;
 
 namespace Graphorama
 {
@@ -48,29 +46,32 @@ namespace Graphorama
 
         private double EvaluateEquation(string equation, double x)
         {
-            // Basic parser for mathematical expressions
-            // Extend this or use libraries like NCalc for more complex parsing
-            equation = equation.Replace("x", x.ToString());
-            DataTable table = new DataTable();
-            return Convert.ToDouble(table.Compute(equation, ""));
+            try
+            {
+                equation = equation.Replace("x", x.ToString());
+                DataTable table = new DataTable();
+                return Convert.ToDouble(table.Compute(equation, ""));
+            }
+            catch
+            {
+                throw new InvalidOperationException("Invalid equation format.");
+            }
         }
 
         private void OnPlotButtonClick(object sender, RoutedEventArgs e)
         {
-            var equation = EquationInput.Text;
+            var equation = EquationInput.Text.Trim();
+            if (string.IsNullOrWhiteSpace(equation))
+            {
+                MessageBox.Show("Please enter a valid equation.");
+                return;
+            }
             PlotFunction(equation);
         }
 
         private void OnClearButtonClick(object sender, RoutedEventArgs e)
         {
             plotModel.Series.Clear();
-            plotModel.InvalidatePlot(true);
-        }
-
-        private void OnZoomResetClick(object sender, RoutedEventArgs e)
-        {
-            plotModel.Axes[0].Reset();
-            plotModel.Axes[1].Reset();
             plotModel.InvalidatePlot(true);
         }
     }
