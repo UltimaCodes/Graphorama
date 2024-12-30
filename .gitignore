@@ -1,0 +1,18 @@
+# Ignore Visual Studio files
+.vs/
+*.vspscc
+*.vssscc
+
+# Ignore compiled files
+*.dll
+*.exe
+*.obj
+*.bin
+
+# Ignore temporary files from editors
+*.log
+*.swp
+*.bak
+
+# Ignore Node.js modules
+node_modules/
