@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Data;
+using System.Globalization;
 using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using OxyPlot;
-using OxyPlot.Series;
 using OxyPlot.Axes;
+using OxyPlot.Series;
 
 namespace Graphorama
 {
@@ -15,6 +18,29 @@ namespace Graphorama
         {
             InitializeComponent();
             InitializeGraph();
+
+            // Add placeholder logic
+            EquationInput.GotFocus += (s, e) =>
+            {
+                if (EquationInput.Text == "Enter equation, e.g., x^2 + 3")
+                {
+                    EquationInput.Text = "";
+                    EquationInput.Foreground = System.Windows.Media.Brushes.Black;
+                }
+            };
+
+            EquationInput.LostFocus += (s, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(EquationInput.Text))
+                {
+                    EquationInput.Text = "Enter equation, e.g., x^2 + 3";
+                    EquationInput.Foreground = System.Windows.Media.Brushes.Gray;
+                }
+            };
+
+            // Initialize with placeholder text
+            EquationInput.Text = "Enter equation, e.g., x^2 + 3";
+            EquationInput.Foreground = System.Windows.Media.Brushes.Gray;
         }
 
         private void InitializeGraph()
@@ -61,7 +87,7 @@ namespace Graphorama
         private void OnPlotButtonClick(object sender, RoutedEventArgs e)
         {
             var equation = EquationInput.Text.Trim();
-            if (string.IsNullOrWhiteSpace(equation))
+            if (string.IsNullOrWhiteSpace(equation) || equation == "Enter equation, e.g., x^2 + 3")
             {
                 MessageBox.Show("Please enter a valid equation.");
                 return;
