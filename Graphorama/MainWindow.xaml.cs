@@ -81,6 +81,11 @@ namespace Graphorama
                 return char.ToUpper(match.Value[0]) + match.Value.Substring(1);
             });
 
+            equation = System.Text.RegularExpressions.Regex.Replace(equation, @"\b(asin|acos|atan)\b", match =>
+            {
+                return match.Value.Substring(0, 1).ToUpper() + match.Value.Substring(1).Replace("asin", "ArcSin").Replace("acos", "ArcCos").Replace("atan", "ArcTan");
+            });
+
             return equation;
         }
 
@@ -113,20 +118,46 @@ namespace Graphorama
             }
         }
 
+        private bool IsValidExpression(string equation)
+        {
+            try
+            {
+                equation = PreprocessEquation(equation);
+
+                equation = equation.Replace("x", "0");
+
+                var expression = new NCalc.Expression(equation);
+                var result = expression.Evaluate();
+                return !double.IsNaN(Convert.ToDouble(result));
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         private void OnAddExpressionClick(object sender, RoutedEventArgs e)
         {
             string equation = EquationInput.Text.Trim();
+
             if (!string.IsNullOrWhiteSpace(equation))
             {
-                if (isRealTime)
+                if (IsValidExpression(equation))
                 {
-                    _ = PlotFunctionRealTime(equation);
+                    if (isRealTime)
+                    {
+                        _ = PlotFunctionRealTime(equation);
+                    }
+                    else
+                    {
+                        PlotFunction(equation);
+                    }
+                    EquationInput.Clear();
                 }
                 else
                 {
-                    PlotFunction(equation);
+                    ShowErrorMessage("Invalid expression. Please check your input.");
                 }
-                EquationInput.Clear();
             }
         }
 
@@ -153,6 +184,7 @@ namespace Graphorama
                 ShowErrorMessage("Invalid equation. Please check your input.");
             }
         }
+
 
         private void OnFunctionListKeyDown(object sender, KeyEventArgs e)
         {
