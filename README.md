@@ -34,7 +34,7 @@ To run Graphorama, you'll need:
 
    OR
    
-1. Extract all files to a folder on your computer.
+1. Extract all files from the latest release zip file to a folder on your computer.
    
 3. Double-click `YourAppName.exe` to launch the application.
 
