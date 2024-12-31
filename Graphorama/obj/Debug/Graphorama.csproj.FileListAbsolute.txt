@@ -1,6 +1,7 @@
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\Graphorama.exe.config
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\Graphorama.exe
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\Graphorama.pdb
+C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\NCalc.dll
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\OxyPlot.dll
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\OxyPlot.Wpf.dll
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\OxyPlot.Wpf.Shared.dll
@@ -19,4 +20,3 @@ C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphor
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphorama.csproj.Up2Date
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphorama.exe
 C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\obj\Debug\Graphorama.pdb
-C:\Users\Ryaan\OneDrive\Documents\GitHub\Graphorama\Graphorama\bin\Debug\NCalc.dll

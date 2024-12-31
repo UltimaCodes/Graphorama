@@ -57,7 +57,6 @@ namespace Graphorama
                 const int batchSize = 10;
                 double step = 0.1;
 
-                // Get axis limits from user input
                 double xMin = double.Parse(XMinInput.Text);
                 double xMax = double.Parse(XMaxInput.Text);
 
@@ -273,17 +272,6 @@ namespace Graphorama
             {
                 axis.Reset();
             }
-            plotModel.InvalidatePlot(true);
-        }
-
-        private void OnToggleDarkModeClick(object sender, RoutedEventArgs e)
-        {
-            isDarkMode = !isDarkMode;
-            var backgroundColor = isDarkMode ? OxyColors.Black : OxyColors.White;
-            var textColor = isDarkMode ? OxyColors.LightGray : OxyColors.Black;
-
-            plotModel.Background = backgroundColor;
-            plotModel.TextColor = textColor;
             plotModel.InvalidatePlot(true);
         }
 

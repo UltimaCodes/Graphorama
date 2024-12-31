@@ -36,9 +36,6 @@
             <Button Content="Clear Graph" Height="30" Margin="0,0,0,10" Click="OnClearGraphClick" />
             <Button Content="Reset Zoom" Height="30" Margin="0,0,0,10" Click="OnResetZoomClick" />
 
-            <!-- Dark Mode Toggle -->
-            <Button Content="Toggle Dark Mode" Height="30" Margin="0,0,0,10" Click="OnToggleDarkModeClick" />
-
             <!-- Real-Time Graphing Controls -->
             <Button x:Name="RealTimeButton" Content="Real-Time: Off" Height="30" Margin="0,0,0,10" Click="OnRealTimeToggleClick" />
 
