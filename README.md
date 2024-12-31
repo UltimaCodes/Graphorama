@@ -25,7 +25,7 @@ To run Graphorama, you'll need:
 1. **Clone the repository** to your local machine:
 
     ```bash
-    git clone https://github.com/yourusername/Graphorama.git
+    git clone https://github.com/UltimaCodes/Graphorama.git
     ```
 
 2. **Open the project** in Visual Studio.
@@ -36,7 +36,7 @@ To run Graphorama, you'll need:
    
 1. Extract all files from the latest release zip file to a folder on your computer.
    
-3. Double-click `YourAppName.exe` to launch the application.
+3. Double-click `Graphorama.exe` to launch the application.
 
 ### Running the Application
 
