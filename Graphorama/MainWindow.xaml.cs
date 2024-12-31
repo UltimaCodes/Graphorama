@@ -10,6 +10,7 @@ using OxyPlot;
 using OxyPlot.Axes;
 using OxyPlot.Series;
 using NCalc;
+using System.Windows.Input;
 
 namespace Graphorama
 {
@@ -152,6 +153,34 @@ namespace Graphorama
                 ShowErrorMessage("Invalid equation. Please check your input.");
             }
         }
+
+        private void OnFunctionListKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Back || e.Key == Key.Delete)
+            {
+                var selectedItem = FunctionList.SelectedItem as string;
+
+                if (selectedItem != null)
+                {
+                    functionList.Remove(selectedItem);
+
+                    FunctionList.Items.Remove(selectedItem);
+
+                    RemoveFunctionFromGraph(selectedItem);
+                }
+            }
+        }
+
+        private void RemoveFunctionFromGraph(string equation)
+        {
+            var seriesToRemove = plotModel.Series.FirstOrDefault(s => s.Title == equation);
+            if (seriesToRemove != null)
+            {
+                plotModel.Series.Remove(seriesToRemove);
+                plotModel.InvalidatePlot(true);
+            }
+        }
+
 
         private void OnClearGraphClick(object sender, RoutedEventArgs e)
         {
