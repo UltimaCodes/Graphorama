@@ -3,7 +3,7 @@
 **Graphorama** is a function plotting application built using C# and WPF, utilizing the OxyPlot library for plotting mathematical functions. The app supports real-time graphing, multiple functions, and provides interactive features like zoom, graph clearing, and limit adjustments. 
 
 ## Features
-
+- https://cloud-1ssjxizmq-hack-club-bot.vercel.app/02025-01-01_01-32-43.mp4
 - Plot mathematical functions with support for a variety of operations
 - Real-time graphing for dynamic function plotting
 - Clear and reset graph functionality
