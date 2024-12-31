@@ -71,13 +71,29 @@ namespace Graphorama
             }
         }
 
+        private string PreprocessEquation(string equation)
+        {
+            equation = System.Text.RegularExpressions.Regex.Replace(equation, @"(\d)([a-zA-Z])", "$1*$2");
+
+            equation = System.Text.RegularExpressions.Regex.Replace(equation, @"\b(sin|cos|tan|log|sqrt|exp)\b", match =>
+            {
+                return char.ToUpper(match.Value[0]) + match.Value.Substring(1);
+            });
+
+            return equation;
+        }
+
         private double EvaluateEquation(string equation, double x)
         {
             try
             {
+                equation = PreprocessEquation(equation);
+
                 equation = equation.Replace("x", x.ToString(CultureInfo.InvariantCulture));
+
                 var expression = new NCalc.Expression(equation);
                 var result = expression.Evaluate();
+
                 return Convert.ToDouble(result);
             }
             catch
@@ -85,6 +101,7 @@ namespace Graphorama
                 return double.NaN;
             }
         }
+
 
         private void UpdateFunctionList()
         {
