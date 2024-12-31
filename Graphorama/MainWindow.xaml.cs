@@ -51,18 +51,34 @@ namespace Graphorama
             try
             {
                 var series = new LineSeries { Title = equation };
-                for (double x = -10; x <= 10; x += 0.1)
+                plotModel.Series.Add(series);
+
+                List<DataPoint> buffer = new List<DataPoint>();
+                const int batchSize = 10;
+                double step = 0.1;
+
+                // Get axis limits from user input
+                double xMin = double.Parse(XMinInput.Text);
+                double xMax = double.Parse(XMaxInput.Text);
+
+                for (double x = xMin; x <= xMax; x += step)
                 {
                     double y = EvaluateEquation(equation, x);
                     if (!double.IsNaN(y) && !double.IsInfinity(y))
                     {
-                        series.Points.Add(new DataPoint(x, y));
-                        plotModel.Series.Clear();
-                        plotModel.Series.Add(series);
-                        plotModel.InvalidatePlot(true);
+                        buffer.Add(new DataPoint(x, y));
+                    }
+
+                    if (buffer.Count >= batchSize || x >= xMax)
+                    {
+                        series.Points.AddRange(buffer);
+                        buffer.Clear();
+                        ThrottledInvalidatePlot();
                         await Task.Delay(1000 / realTimeSpeed);
                     }
                 }
+
+                plotModel.InvalidatePlot(true);
                 functionList.Add(equation);
                 UpdateFunctionList();
             }
@@ -70,6 +86,31 @@ namespace Graphorama
             {
                 ShowErrorMessage("Invalid equation for real-time graphing.");
             }
+        }
+
+        private DateTime lastRedrawTime = DateTime.MinValue;
+        private readonly TimeSpan redrawInterval = TimeSpan.FromMilliseconds(16);
+
+        private void ThrottledInvalidatePlot()
+        {
+            if (DateTime.Now - lastRedrawTime > redrawInterval)
+            {
+                plotModel.InvalidatePlot(false);
+                lastRedrawTime = DateTime.Now;
+            }
+        }
+
+        private void PlotView_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.RightButton == MouseButtonState.Pressed)
+            {
+                ThrottledInvalidatePlot();
+            }
+        }
+
+        private void PlotView_MouseUp(object sender, MouseButtonEventArgs e)
+        {
+            plotModel.InvalidatePlot(true);
         }
 
         private string PreprocessEquation(string equation)
@@ -94,7 +135,6 @@ namespace Graphorama
             try
             {
                 equation = PreprocessEquation(equation);
-
                 equation = equation.Replace("x", x.ToString(CultureInfo.InvariantCulture));
 
                 var expression = new NCalc.Expression(equation);
@@ -102,12 +142,12 @@ namespace Graphorama
 
                 return Convert.ToDouble(result);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"Error evaluating equation '{equation}': {ex.Message}");
                 return double.NaN;
             }
         }
-
 
         private void UpdateFunctionList()
         {
@@ -166,7 +206,12 @@ namespace Graphorama
             try
             {
                 var series = new LineSeries { Title = equation };
-                for (double x = -10; x <= 10; x += 0.1)
+
+                // Get axis limits from user input
+                double xMin = double.Parse(XMinInput.Text);
+                double xMax = double.Parse(XMaxInput.Text);
+
+                for (double x = xMin; x <= xMax; x += 0.1)
                 {
                     double y = EvaluateEquation(equation, x);
                     if (!double.IsNaN(y) && !double.IsInfinity(y))
@@ -174,6 +219,7 @@ namespace Graphorama
                         series.Points.Add(new DataPoint(x, y));
                     }
                 }
+
                 plotModel.Series.Add(series);
                 plotModel.InvalidatePlot(true);
                 functionList.Add(equation);
@@ -184,7 +230,6 @@ namespace Graphorama
                 ShowErrorMessage("Invalid equation. Please check your input.");
             }
         }
-
 
         private void OnFunctionListKeyDown(object sender, KeyEventArgs e)
         {
@@ -320,12 +365,10 @@ namespace Graphorama
             {
                 double xMin = double.Parse(XMinInput.Text);
                 double xMax = double.Parse(XMaxInput.Text);
-                double yMin = double.Parse(YMinInput.Text);
-                double yMax = double.Parse(YMaxInput.Text);
 
-                if (xMin >= xMax || yMin >= yMax)
+                if (xMin >= xMax)
                 {
-                    ShowErrorMessage("Invalid axis limits. Ensure Min values are less than Max values.");
+                    ShowErrorMessage("Invalid X-axis limits. Ensure Min value is less than Max value.");
                     return;
                 }
 
@@ -336,19 +379,15 @@ namespace Graphorama
                         axis.Minimum = xMin;
                         axis.Maximum = xMax;
                     }
-                    else if (axis.Position == AxisPosition.Left)
-                    {
-                        axis.Minimum = yMin;
-                        axis.Maximum = yMax;
-                    }
                 }
 
                 plotModel.InvalidatePlot(true);
             }
             catch
             {
-                ShowErrorMessage("Invalid input. Please enter numeric values for axis limits.");
+                ShowErrorMessage("Invalid input. Please enter numeric values for X-axis limits.");
             }
         }
+
     }
 }
