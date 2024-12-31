@@ -32,6 +32,12 @@ To run Graphorama, you'll need:
    
 3. **Build and run** the project using Visual Studio (use the "Start" button or press `F5`).
 
+   OR
+   
+1. Extract all files to a folder on your computer.
+   
+3. Double-click `YourAppName.exe` to launch the application.
+
 ### Running the Application
 
 Once the application is running, you will see:
